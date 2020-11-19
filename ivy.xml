@@ -1,0 +1,25 @@
+<ivy-module version="2.0">
+   <info organisation="swx.sehome" module="" />
+   <dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-parent -->
+		<dependency org="org.springframework.boot" name="spring-boot-starter-parent" rev="2.3.4.RELEASE">
+			<artifact name="spring-boot-starter-parent" type="pom" ext="pom"/>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
+		<dependency org="org.springframework.boot" name="spring-boot-starter-web" rev="2.3.4.RELEASE">
+			<exclude module="spring-boot-starter-tomcat"/>
+		</dependency>
+	
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jetty -->
+		<dependency org="org.springframework.boot" name="spring-boot-starter-jetty" rev="2.3.4.RELEASE"/>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
+		<dependency org="org.springframework.boot" name="spring-boot-starter-thymeleaf" rev="2.3.4.RELEASE"/>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-jdbc -->
+		<dependency org="org.springframework.boot" name="spring-boot-starter-jdbc" rev="2.3.4.RELEASE"/>
+		
+		<dependency org="org.springframework.boot" name="spring-boot-starter-security" rev="2.3.4.RELEASE"/>
+    </dependencies>
+</ivy-module>

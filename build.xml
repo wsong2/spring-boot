@@ -1,0 +1,62 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="springBootApp" basedir="." default="build">
+    <property name="ivy.home" value="c:/apache-ivy-2.5.0" />
+    <property name="ivy.jar.dir" value="${ivy.home}"/>
+    <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
+    
+	<property name="src.dir"  location="src/main/java"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="build.dir" value="bin" />
+	<property name="rsrc.dir"  location="src/main/resources"/>
+	
+	<property name="opt.encoding" value="UTF-16"/>
+	
+	<path id="project.classpath">
+		<fileset dir="${lib.dir}" includes="*.jar" />
+	</path>
+
+	<macrodef name="do3seq">
+		<sequential>
+			<mkdir dir="${build.dir}" />
+			<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="project.classpath" includeantruntime="false" encoding="${opt.encoding}">
+				<exclude name="**/test/Tests.java" />
+			</javac>
+			<copy todir="${build.dir}">
+				<fileset dir="${rsrc.dir}"/>
+			</copy>
+		</sequential>
+	</macrodef>
+
+    <target name="init-ivy">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+    </target>
+
+	<target name="get-dependencies" depends="init-ivy">
+	    <ivy:retrieve pattern="${lib.dir}/[artifact](-[classifier])(-[revision]).[ext]"/>
+		<ivy:resolve/>
+	</target>
+
+	<target name="build" depends="get-dependencies">
+		<do3seq />
+	</target>
+
+	<target name="make">	
+		<do3seq />
+	</target>
+
+	<target name="clean">
+	    <delete includeemptydirs="true" quiet="true">
+			<fileset dir="${build.dir}" includes="**/*"/>
+		</delete>
+	</target>
+
+	<target name="libclean">
+		<delete quiet="true">
+			<fileset dir="${lib.dir}" includes="**/*" excludes="mssql-jdbc-*.jar" />					
+        </delete>
+	</target>
+
+</project>
