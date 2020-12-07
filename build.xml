@@ -1,5 +1,6 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="springBootApp" basedir="." default="build">
-    <property name="ivy.home" value="c:/apache-ivy-2.5.0" />
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="springBootApp" basedir="." default="make">
+	<property environment="env"/>
+	<property name="ivy.home" value="${env.IVY_HOME}" />
     <property name="ivy.jar.dir" value="${ivy.home}"/>
     <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
     
@@ -8,7 +9,7 @@
 	<property name="build.dir" value="bin" />
 	<property name="rsrc.dir"  location="src/main/resources"/>
 	
-	<property name="opt.encoding" value="UTF-16"/>
+	<property name="opt.encoding" value="UTF-8"/>
 	
 	<path id="project.classpath">
 		<fileset dir="${lib.dir}" includes="*.jar" />
@@ -20,7 +21,7 @@
 			<javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="project.classpath" includeantruntime="false" encoding="${opt.encoding}">
 				<exclude name="**/test/Tests.java" />
 			</javac>
-			<copy todir="${build.dir}">
+			<copy todir="${build.dir}" verbose="true">
 				<fileset dir="${rsrc.dir}"/>
 			</copy>
 		</sequential>
@@ -53,8 +54,14 @@
 		</delete>
 	</target>
 
-	<target name="libclean">
-		<delete quiet="true">
+	<target name="clean-static">
+	    <delete includeemptydirs="true" quiet="true">
+			<fileset dir="${build.dir}/main/static" includes="**/*"/>
+		</delete>
+	</target>
+
+	<target name="clean-lib">
+		<delete>
 			<fileset dir="${lib.dir}" includes="**/*" excludes="mssql-jdbc-*.jar" />					
         </delete>
 	</target>

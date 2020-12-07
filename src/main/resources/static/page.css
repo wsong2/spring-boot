@@ -1,0 +1,41 @@
+.fieldset
+{
+	border:1px solid cyan;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;	
+    border-radius:8px;
+	width: 46em;
+}
+button.footer {
+	background-color: Transparent;
+	background-repeat:no-repeat;
+	border: none;
+	cursor:pointer;
+	overflow: hidden;
+	outline:none;
+	font-weight : bold;
+}
+div.grid {
+	margin-top: 10px;
+	width: 48em;
+}
+div.grid .gridinfo { 
+	float:right;
+	margin-right: 3em;
+}
+hr.gray {
+  border-top: 1px solid cyan;
+}
+
+div.display-table {
+    display: table; 
+}
+div.tr { 
+    display: table-row; 
+}
+div.tr > span, input, label {
+    display:table-cell;
+}
+div.td { 
+    display: table-cell;
+}
