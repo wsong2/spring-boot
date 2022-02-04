@@ -7,7 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class SecuredPasswordGenerator
 {
-
 	public static void main(String[] args)
 	{
 		String uid = "jetty";
@@ -18,13 +17,10 @@ public class SecuredPasswordGenerator
 			System.out.println(uid + ':' + pwd);
 		}
 		
-        var encoder = new BCryptPasswordEncoder();
-                
-        String encodedPassword = encoder.encode(pwd);       
+        String encodedPassword = new BCryptPasswordEncoder().encode(pwd);       
         System.out.println(encodedPassword);
         
         byte[] bytes = (uid + ":" + encodedPassword).getBytes(StandardCharsets.UTF_8);     
         System.out.println(Base64.getEncoder().encodeToString(bytes));
 	}
-
 }

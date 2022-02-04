@@ -1,7 +1,6 @@
 package swx.springboot.controller;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,16 +73,9 @@ public class MiscItemController
 	    if (itemName == null || itemName.isBlank()) {
 	    	return Map.of("op","new", "details", "missing item name");
 	    }	    
-	    var mi = new MiscItem();
-	    mi.setProperty("itemName", itemName);
-	    mi.setItemDate(MiConverter.parseLocalDate(mapIn.get("itemDate")));
-	    mi.setProperty("descr", (String)mapIn.get("descr"));
-	    mi.setValue1(MiConverter.parseIntValue(mapIn.get("value1")));
-	    mi.setValue2(MiConverter.parseDoubleValue(mapIn.get("value2")));
-	    mi.setProperty("more", (String)mapIn.get("more"));
-		if (svce.addRecord(mi) > 0) {
-			String idStr = String.valueOf(mi.getItemId());
-			return Map.of("status", "OK", "op", "new", "itemId", idStr);		
+	    int itemId = svce.addRecord(mapIn);
+		if (itemId > 0) {
+			return Map.of("status", "OK", "op", "new", "itemId", String.valueOf(itemId));		
 		}
 		return Map.of("status", "sql", "op", "new");
 	}
@@ -92,46 +84,10 @@ public class MiscItemController
 	public Map<String, String> update(@RequestBody Map<String, Object> map)
 	{
 		for (Map.Entry<String, Object> entry: map.entrySet()) {
-			if (entry.getKey().isBlank())	continue;
-			logger.info("** " + entry.getKey() + ": " + entry.getValue());
+			String sKey = entry.getKey();
+			if (!sKey.isBlank())	logger.info("** " + sKey + ": " +  entry.getValue());
 		}
-    	Integer itemId = MiConverter.parseIntValue(map.get("itemId"));
-    	if (itemId == null) {
-    		return Map.of("status", "E", "details", "Missing Id");
-    	}
-	    List<String> props = new ArrayList<>();
-	    String[] cols = {"itemName", "descr", "more"};    
-	    var mi = new MiscItem();
-	    mi.setItemId(itemId);
-	    for (String cn: cols) {
-		    if (!map.containsKey(cn)) continue;
-		    props.add(cn);
-		    mi.setProperty(cn, (String)map.get(cn));
-	    }
-	    if (map.containsKey("itemDate")) {
-	    	props.add("itemDate");
-	    	mi.setItemDate(MiConverter.parseLocalDate(map.get("itemDate")));
-	    }
-	    if (map.containsKey("value1")) {
-	    	props.add("value1");
-	    	mi.setValue1(MiConverter.parseIntValue(map.get("value1")));
-	    }
-	    if (map.containsKey("value2")) {
-	    	props.add("value2");
-	    	mi.setValue2(MiConverter.parseDoubleValue(map.get("value2")));
-	    }
-	    if (props.isEmpty()) {
-    		return Map.of("status", "W", "details", "No field");
-	    }
-
-	    int retValue = svce.updateRecord(props, mi);
-		if (retValue > 0) { // Convention
-			return Map.of("status", "OK", "op", "update", "itemId", String.valueOf(itemId));
-		} else if (retValue == 0) {
-			return Map.of("status", "E", "details", itemId + ": ill-formatted sql");			
-		} else {
-			return Map.of("status", "sql", "op", "update", "details", itemId + ": execUpdate");
-		}
+	    return svce.updateRecord(map);
 	}
 	
 	@RequestMapping(value="/del/{id}", method=RequestMethod.DELETE)

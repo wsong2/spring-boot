@@ -1,6 +1,7 @@
 package swx.springboot.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,19 +15,15 @@ public class MiService
 	@Autowired
 	MiscItemDAO dao;
 	
-	public int addRecord(MiscItem mi)
+	public int addRecord(Map<String, Object> map)
 	{
-	    Integer ret = dao.addRecord(mi);
-	    if (ret == null) {
-	    	return -1;
-	    }
-	    mi.setItemId(ret.intValue());
-	    return mi.getItemId();
+	    Integer ret = dao.addRecord(map);
+	    return (ret == null) ? -1 : ret.intValue();
 	}
 	
-	public int updateRecord(List<String> props, MiscItem mi)
+	public Map<String, String> updateRecord(Map<String, Object> map)
 	{
-	    return dao.updateRecord(props, mi);	    
+	    return dao.updateRecord(map);	    
 	}
 	
 	public boolean deleteRecord(int itemId)

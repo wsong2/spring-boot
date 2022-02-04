@@ -6,13 +6,14 @@
     
 	<property name="src.dir"  location="src/main/java"/>
 	<property name="lib.dir" location="lib"/>
+	<property name="ulib.dir" location="lib/ulib"/>
 	<property name="build.dir" value="bin" />
 	<property name="rsrc.dir"  location="src/main/resources"/>
 	
 	<property name="opt.encoding" value="UTF-8"/>
 	
 	<path id="project.classpath">
-		<fileset dir="${lib.dir}" includes="*.jar" />
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
 
 	<macrodef name="do3seq">
@@ -36,7 +37,7 @@
     </target>
 
 	<target name="get-dependencies" depends="init-ivy">
-	    <ivy:retrieve pattern="${lib.dir}/[artifact](-[classifier])(-[revision]).[ext]"/>
+	    <ivy:retrieve pattern="${ulib.dir}/[artifact](-[classifier])(-[revision]).[ext]"/>
 		<ivy:resolve/>
 	</target>
 
@@ -62,7 +63,7 @@
 
 	<target name="clean-lib">
 		<delete>
-			<fileset dir="${lib.dir}" includes="**/*" excludes="mssql-jdbc-*.jar" />					
+			<fileset dir="${ulib.dir}" includes="**/*" excludes="mssql-jdbc-*.jar" />					
         </delete>
 	</target>
 

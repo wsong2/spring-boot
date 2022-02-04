@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(using = MiSerializer.class)
 public class MiscItem
 {
-	//private static final Logger logger = LoggerFactory.getLogger(MiscItem.class);
-	
 	private int itemId;
 	private String itemName;
 	private LocalDate itemDate;
@@ -21,27 +19,16 @@ public class MiscItem
 	private String more;
 
 	public void setItemId(int id) { itemId = id; }
+	public void setName(String s) {itemName = s;};
+	public void setDescr(String s) {descr = s;};	
+	public void setMore(String s) { more = s; }
+	
 	public void setItemDate(LocalDate dt) { itemDate = dt; }
 	public void setDttm(LocalDateTime localDttm) { dttm = localDttm; }
 	public void setValue1(Integer i) {value1 = i;}
 	public void setValue2(Double d) {value2 = (d==null) ? null : BigDecimal.valueOf(d.doubleValue());}
-	
-	public void setProperty(String pn, String s) {
-		switch (pn) {
-		case "itemName": 
-			itemName = s;
-			break;
-		case "descr": 
-			descr = s;
-			break;
-		case "more":
-			more = s;
-			break;
-		}
-	}
 
-	public int getItemId() { return itemId; }
-	
+	public int getItemId() { return itemId; }	
 	public String getItemName() { return itemName; }
 	public String getDescr() { return descr; }
 	public String getMore() { return more; }
