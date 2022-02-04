@@ -32,7 +32,13 @@ import swx.springboot.utils.MiConverter;
 public class MiscItemDAO
 {
 	Logger logger = LoggerFactory.getLogger(MiscItemDAO.class);
-
+	
+	private static class ColumnInfo {
+		int sqlType;
+		String columnName;
+		Object columnValue;
+	}
+	
 	private final static String CATEG = "categ";
 	private final static String VALUE_CATEG = "sp.api";
 	private final static String VALUE1 = "value1";
@@ -47,15 +53,20 @@ public class MiscItemDAO
         new ColumnDfn(VALUE2, Types.DECIMAL),
         new ColumnDfn("more", Types.NVARCHAR)			
 	};
-	private final static ColumnDfn VALUE_N1 = new ColumnDfn("valueN1", Types.INTEGER);
-	private final static ColumnDfn VALUE_D1 = new ColumnDfn("valueD1", Types.DECIMAL);
 	
-	private static void addParamValue(String columnId, String dbColumn, Object objValue, MapSqlParameterSource mapSqlParam) {
+	private boolean addParamValue(String columnId, String dbColumn, Object objValue, MapSqlParameterSource mapSqlParam) {
+		if ("itemDate".equals(columnId)) {
+			MiConverter.DateResult dateResult = MiConverter.parseLocalDate(objValue);
+			if (dateResult.outcome == MiConverter.PARSE_ERR) {
+				logger.error("DAO.addParamValue: date param parse error");
+				return false;
+			}
+			LocalDate localDate = (dateResult.outcome == MiConverter.BLANK_INPUT) ? LocalDate.now() : dateResult.localDate;			
+			mapSqlParam.addValue(dbColumn, java.sql.Date.valueOf(localDate));
+			return true;
+		}
 		if (CATEG.equals(columnId)) {
 			mapSqlParam.addValue(dbColumn, VALUE_CATEG); 
-		} else if ("itemDate".equals(columnId)) {
-    	    LocalDate localDate = MiConverter.parseLocalDate(objValue);
-    	    mapSqlParam.addValue(dbColumn, java.sql.Date.valueOf(localDate));
 		} else if (VALUE1.equals(columnId)) {
     	    mapSqlParam.addValue(dbColumn, MiConverter.parseIntValue(objValue));
 		} else if (VALUE2.equals(columnId)) {
@@ -63,14 +74,20 @@ public class MiscItemDAO
 		} else {
 			mapSqlParam.addValue(dbColumn, (String)objValue);
 		}
+		return true;
 	}
 	
-	private static ColumnDfn findColumnDfn(String sKey) {
+	private ColumnInfo findColumnInfo(String sKey) {
 		for (ColumnDfn dfn: COLUMN_DFN) {
-			if (dfn.columnId.equals(sKey))
-				return  VALUE1.equals(dfn.dbColumn) ? VALUE_N1 : (
-						VALUE2.equals(dfn.dbColumn) ? VALUE_D1 : dfn);
+			if (!dfn.columnId.equals(sKey))
+				continue;
+			String cn = dfn.columnName;
+			ColumnInfo info = new ColumnInfo();
+			info.columnName = VALUE1.equals(cn) ? "valueN1" : (VALUE2.equals(cn) ? "valueD1" : cn);
+			info.sqlType = dfn.sqlType;
+			return info;
 		}
+		logger.info("** DB: unmatched key - " + sKey);
 		return null;
 	}
 
@@ -80,7 +97,7 @@ public class MiscItemDAO
     public Integer addRecord(Map<String, Object> mapValue)
     {
     	final String paramPK = "@item_id";
-    	List<SqlParameter> params = Stream.of(COLUMN_DFN).map(r -> new SqlParameter(r.dbColumn,r.sqlType)).collect(Collectors.toList());
+    	List<SqlParameter> params = Stream.of(COLUMN_DFN).map(r -> new SqlParameter(r.columnName,r.sqlType)).collect(Collectors.toList());
     	params.add(new SqlOutParameter(paramPK, Types.INTEGER));
     	SqlParameter[] declareParams = new SqlParameter[params.size()+1];
     	
@@ -91,7 +108,8 @@ public class MiscItemDAO
 
 	    MapSqlParameterSource mapSqlParam = new MapSqlParameterSource();
 	    for (ColumnDfn dfn: COLUMN_DFN) {
-	    	addParamValue(dfn.columnId, dfn.dbColumn, mapValue.get(dfn.columnId), mapSqlParam);
+	    	if (!addParamValue(dfn.columnId, dfn.columnName, mapValue.get(dfn.columnId), mapSqlParam))
+	    		return -1;
 	    }
 
 	    Map<String, Object> out = call.execute(mapSqlParam);
@@ -101,7 +119,7 @@ public class MiscItemDAO
     public Map<String, String> updateRecord(Map<String, Object> mapValue)
     {
     	Integer itemId = null;
-	    List<ColumnDfn> columns = new ArrayList<>();
+	    List<ColumnInfo> columns = new ArrayList<>();
 	    
     	StringBuilder sbColumn = new StringBuilder(1000);
     	for (Map.Entry<String, Object> entry : mapValue.entrySet()) {
@@ -109,10 +127,11 @@ public class MiscItemDAO
 				itemId = MiConverter.parseIntValue(entry.getValue());
 				continue;
 			}     		
-			ColumnDfn dfn = findColumnDfn(entry.getKey());
-			if (dfn != null) {
-				sbColumn.append(",[").append(dfn.dbColumn).append("]=?");
-				columns.add(dfn);
+			ColumnInfo info = findColumnInfo(entry.getKey());
+			if (info != null) {
+				info.columnValue = entry.getValue();
+				sbColumn.append(",[").append(info.columnName).append("]=?");
+				columns.add(info);
 			}
     	}
     	if (itemId == null) 	return Map.of("status", "E", "details", "Missing Id");
@@ -122,40 +141,51 @@ public class MiscItemDAO
 	    sbColumn.append(" WHERE [item_id]=? AND [categ]=?");
 	    String sql = sbColumn.toString();
 		logger.info("SQL stmt: " + sql);
-	    
+		
+		Boolean result = execUpdate(sql, itemId.intValue(), columns);
+		if (result == null)			return Map.of("status", "sql", "op", "update", "details", itemId + ": execUpdate");
+		if (result.booleanValue())	return Map.of("status", "OK", "op", "update", "itemId", String.valueOf(itemId));
+		return Map.of("status", "E", "details", itemId + ": ill-formatted sql");
+    }
+    
+    private Boolean execUpdate(String sql, int itemId, List<ColumnInfo> columns)
+    {
 		try (
 			Connection conn= jdbcTemplate.getDataSource().getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 		) {
 		    final int nColumn = columns.size()+1;
 		    for (int iCol=1; iCol < nColumn; iCol++) {
-		    	ColumnDfn dfn = columns.get(iCol-1);
-		    	Object obj = mapValue.get(dfn.columnId);
-		    	if (Types.DATE == dfn.sqlType) {
-	    	   		LocalDate localDate = MiConverter.parseLocalDate(obj);
+		    	ColumnInfo info = columns.get(iCol-1);
+		    	if (Types.DATE == info.sqlType) {
+					MiConverter.DateResult dateResult = MiConverter.parseLocalDate(info.columnValue);
+					if (dateResult.outcome == MiConverter.PARSE_ERR) {
+						logger.error("DAO.execUpdate: date param parse error - #" + iCol);
+						return false;
+					}
+					LocalDate localDate = (dateResult.outcome == MiConverter.BLANK_INPUT) ? LocalDate.now() : dateResult.localDate;			
 	        		pstmt.setDate(iCol, java.sql.Date.valueOf(localDate));		    		
-		    	} else if (Types.INTEGER == dfn.sqlType) {
-	    	   		Integer iValue = MiConverter.parseIntValue(obj);
+		    	} else if (Types.INTEGER == info.sqlType) {
+	    	   		Integer iValue = MiConverter.parseIntValue(info.columnValue);
 	    			pstmt.setInt(iCol, iValue.intValue());		    		
-		    	} else if (Types.DECIMAL == dfn.sqlType) {
-	    	   		Double dValue = MiConverter.parseDoubleValue(obj);
+		    	} else if (Types.DECIMAL == info.sqlType) {
+	    	   		Double dValue = MiConverter.parseDoubleValue(info.columnValue);
 	    	    	pstmt.setBigDecimal(iCol, BigDecimal.valueOf(dValue));		    		
 		    	} else {
-	    			pstmt.setString(iCol, (String)obj);		    		
+	    			pstmt.setString(iCol, (String)info.columnValue);		    		
 		    	}
 		    }
 			//logger.info(String.format("** pstmt %d,%s", nColumn, CATEG));
-			pstmt.setInt(nColumn, itemId.intValue());
+			pstmt.setInt(nColumn, itemId);
 			pstmt.setString(nColumn+1, VALUE_CATEG);
-			if (pstmt.executeUpdate() > 0) {
-				return Map.of("status", "OK", "op", "update", "itemId", String.valueOf(itemId));
-			}
-			return Map.of("status", "E", "details", itemId + ": ill-formatted sql");
+			return (pstmt.executeUpdate() > 0);
 		} catch (SQLException e) {
-			logger.error("updateRecord", e);
-			return Map.of("status", "sql", "op", "update", "details", itemId + ": execUpdate");
+			logger.error("DAO.execUpdate", e);
+			return null;
 		} 
     }
+    
+        
     
 	public Integer deleteRecord(int itemId)
 	{

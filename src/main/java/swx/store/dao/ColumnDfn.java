@@ -3,11 +3,11 @@ package swx.store.dao;
 class ColumnDfn
 {
 	final int	 sqlType;
-	final String dbColumn;
+	final String columnName;
 	final String columnId;
 	
 	ColumnDfn(String columnName, int columnType) {
-		this.dbColumn = columnName;
+		this.columnName = columnName;
 		this.sqlType = columnType;
 		this.columnId = dbNameToCamelOne(columnName);
 	}
@@ -19,5 +19,5 @@ class ColumnDfn
 			sb.append(Character.toUpperCase(ss[index].charAt(0))).append(ss[index].substring(1));
 		}
 		return sb.toString();
-	}
+	}	
 }

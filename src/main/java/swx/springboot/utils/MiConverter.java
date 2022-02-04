@@ -15,6 +15,21 @@ public class MiConverter
 {
 	private static final Logger logger = LoggerFactory.getLogger(MiConverter.class);
 	
+	public static final int PARSE_OK = 0;
+	public static final int PARSE_ERR = 2;
+	public static final int BLANK_INPUT = 1;
+	
+	public static class DateResult
+	{
+		public final LocalDate localDate;
+		public final int outcome;
+		
+		private DateResult(LocalDate localDate, int outcome) {
+			this.localDate = localDate;
+			this.outcome = outcome;
+		}
+	}
+	
 	public static Integer parseIntValue(Object val)
 	{
 		if (val instanceof Integer) {
@@ -56,22 +71,22 @@ public class MiConverter
 	    }
 	}
 
-	public static LocalDate parseLocalDate(Object val)
+	public static DateResult parseLocalDate(Object val)
 	{
 		if (val instanceof LocalDate) {
-			return (LocalDate)val;
+			return new DateResult((LocalDate)val, PARSE_OK);
 		}
 		String dateStr = (String)val;
-		if (dateStr == null) {
-			logger.error("** LocalDate conversion: " + val);
-			return null;
+		if (dateStr == null || dateStr.isBlank()) {	// Brower may submit blank value
+			return new DateResult(null, BLANK_INPUT);
 		}		
 	    try {
-	    	return LocalDate.parse(dateStr);
+	    	LocalDate localDate = LocalDate.parse(dateStr);
+	    	return new DateResult(localDate, PARSE_OK);
 	    }
 	    catch (DateTimeParseException e) {
 	    	logger.warn("** bad LocalDate: " + dateStr);
-	    	return null;
+			return new DateResult(null, PARSE_ERR);
 	    }
 	}
 	

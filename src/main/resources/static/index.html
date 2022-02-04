@@ -1,26 +1,18 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8"/>
-	<title>Tab Page</title>
-	<link rel="stylesheet" href="app.css">
-	<link rel="stylesheet" href="page.css">
-	<script src="tab.js"></script>
+<html><head><meta charset="UTF-8"/><title>Tab Page</title>
+<link rel="stylesheet" href="app.css?version=1"><link rel="stylesheet" href="page.css?version=1">
+<script src="tab.js"></script>
 </head>
 <body onload="init();populateTBodys()">
 <ul id="tabs">
  <li><a href="#addnew">Items</a></li> <li><a href="#settings">Settings</a></li> <li><a href="#aspx">Help</a></li>
 </ul>
-
- <div class="tabContent" id="settings">
-   <form>
+ <div class="tabContent" id="settings"><form>
    <div class="display-table">
 	<div class="tr"><span>Category</span><div class="td">
 		<select name="categ">
-			<option value="00">(none)</option>
-			<option value="ZH">中文</option>
-			<option value="FR">Français</option>
-			<option value="EN">English</option>
+			<option value="00">(none)</option><option value="ZH">中文</option>
+			<option value="FR">Français</option><option value="EN">English</option>
 		</select><br></div>
 		<label for="ck01">&nbsp;Use Strict</label><input type="checkbox" id="ck01" name="miMore"/><div class="td"></div><input type="date" name="miDate"/>
 	</div>

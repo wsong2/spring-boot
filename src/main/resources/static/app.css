@@ -36,3 +36,5 @@ table.noborder {
 table.noborder td {
 	border: none;
 }
+
+td { background-color: #d8e6dc; }

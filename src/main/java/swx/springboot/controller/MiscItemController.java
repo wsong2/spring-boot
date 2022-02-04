@@ -47,8 +47,7 @@ public class MiscItemController
 			@RequestParam("miChoice") Optional<String> choice, 
 			@RequestParam("miMore") Optional<String> miMore,
 			@RequestParam("miDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> miDate
-	)
-	{
+	) {
 		String price = value1.orElse(1) + (value2.isPresent() ? (" for " + value2.get()) : "");
 		Map<String, String> map = Map.of(
 				"categ", categ, 
