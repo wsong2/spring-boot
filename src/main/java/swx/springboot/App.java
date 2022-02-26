@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -25,9 +24,6 @@ public class App
         */
         SpringApplication.run(App.class, args);
     }
-    
-    @Autowired
-    JdbcTemplate jdbcTemplate;
     
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource)
