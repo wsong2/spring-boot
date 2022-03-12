@@ -5,4 +5,3 @@ build
 lib
 application.properties
 node_modules
-unused_deps
