@@ -15,10 +15,18 @@ public class MiService
 	@Autowired
 	MiscItemDAO dao;
 	
-	public int addRecord(Map<String, Object> map)
+	public Map<String, String> addRecord(Map<String, Object> mapIn)
 	{
-	    Integer ret = dao.addRecord(map);
-	    return (ret == null) ? -1 : ret.intValue();
+		String itemName = (String)mapIn.get("itemName");
+	    if (itemName == null || itemName.isBlank()) {
+	    	return Map.of("op","new", "details", "missing item name");
+	    }	    
+	    Integer ret = dao.addRecord(mapIn);
+	    int itemId = (ret == null) ? -1 : ret.intValue();
+		if (itemId > 0) {
+			return Map.of("status", "OK", "op", "new", "itemId", String.valueOf(itemId));		
+		}
+		return Map.of("status", "sql", "op", "new");
 	}
 	
 	public Map<String, String> updateRecord(Map<String, Object> map)
@@ -26,10 +34,16 @@ public class MiService
 	    return dao.updateRecord(map);	    
 	}
 	
-	public boolean deleteRecord(int itemId)
+	public Map<String, String> deleteRecord(Integer itemId)
 	{
+		if (itemId == null) {
+			return Map.of("status", "E", "itemId", "Null");			
+		}
 		Integer row = dao.deleteRecord(itemId);
-		return (row != null && row.intValue() > 0);
+		if (row != null && row.intValue() > 0) {
+			return Map.of("status", "OK", "itemId", String.valueOf(itemId.intValue()));
+		}
+		return Map.of("status", "sql", "itemId", String.valueOf(itemId));	
 	}
 
 	public List<MiscItem> getAll()

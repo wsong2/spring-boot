@@ -18,7 +18,7 @@ public class App
     public static void main(String[] args) throws FileNotFoundException, IOException
     {
     	/*
-        SpringApplication app = new SpringApplication(App.class);
+        var app = new SpringApplication(App.class);
         app.setDefaultProperties(Collections.singletonMap("server.port", "8081"));
         app.run(args);       
         */

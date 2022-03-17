@@ -68,15 +68,7 @@ public class MiscItemController
 	@RequestMapping(value="/addnew", method=RequestMethod.POST)
 	public Map<String, String> create(@RequestBody Map<String, Object> mapIn)
 	{
-		String itemName = (String)mapIn.get("itemName");
-	    if (itemName == null || itemName.isBlank()) {
-	    	return Map.of("op","new", "details", "missing item name");
-	    }	    
-	    int itemId = svce.addRecord(mapIn);
-		if (itemId > 0) {
-			return Map.of("status", "OK", "op", "new", "itemId", String.valueOf(itemId));		
-		}
-		return Map.of("status", "sql", "op", "new");
+		return svce.addRecord(mapIn);
 	}
 	
 	@RequestMapping(value="/update", method=RequestMethod.POST)
@@ -90,13 +82,9 @@ public class MiscItemController
 	}
 	
 	@RequestMapping(value="/del/{id}", method=RequestMethod.DELETE)
-	public Map<String, Object> delete(@PathVariable (value = "id") Integer id)
+	public Map<String, String> delete(@PathVariable (value = "id") Integer id)
 	{
-		if (id == null) {
-			return Map.of("status", "E", "itemId", "Null");			
-		}
-		String status = svce.deleteRecord(id.intValue()) ? "OK" : "sql";	
-		return Map.of("status", status, "itemId", String.valueOf(id.intValue()));	
+		return svce.deleteRecord(id);	
 	}
 	
 	@RequestMapping(value="/onevalue/{id}/{property}", method=RequestMethod.GET)

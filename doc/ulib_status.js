@@ -41,15 +41,15 @@ for (; iL < mIvyJarList.length; iL++) {
 }
 
 if (mDiff.length > 0) {
-	vtOut.WriteLine('-- To update --');
+	PrintSection('To update');
 	for (var i=0; i<mDiff.length; i++)
 		vtOut.WriteLine(mDiff[i]);
 }
-vtOut.WriteLine('-- Unmatched user jar --');
+PrintSection('Unmatched User jar');
 for (var i=0; i<mUnmatched.length; i++) {
 	vtOut.WriteLine(mUnmatched[i]);
 }
-vtOut.WriteLine('-- Unused jar --');
+PrintSection('Unused jar');
 for (var i=0; i<mUnused.length; i++) {
 	vtOut.WriteLine(mUnused[i]);
 }
@@ -104,6 +104,14 @@ function dispatcher(s1, s2)
 }
 
 //
+function PrintSection(vMsg) {
+	var sp = '---------------------------------------------------------------';
+	var len = vMsg.length + 6;
+	vtOut.WriteLine(sp.substr(0,len));
+	vtOut.Write('-- '); vtOut.Write(vMsg); vtOut.WriteLine(' --');
+	vtOut.WriteLine(sp.substr(0,len));	
+}
+
 function QuitWithError(vMsg)
 {
 	WScript.Echo(vMsg);

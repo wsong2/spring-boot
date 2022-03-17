@@ -278,6 +278,23 @@ function parseMultiPart(bodyText) {
 	return buffer;
 }
 
+function doGetOneValue(id, prop, btn) {
+	let url = '/item/onevalue/' + id + '/' + prop;
+	//console.log('**URL ' + url);
+	btn.disabled = true;
+	fetch(url).then(
+		(response) => response.json()
+	).then(data => {
+		//console.log(data); 
+		let txt = 'id: ' + data.id + '\r\nproperty: ' + data.property + '\r\nstatus: ' + data.status;
+		document.getElementById("ta1").value = txt;
+		btn.disabled = false;
+	}).catch((err) => {
+		console.log(err);
+		btn.disabled = false;
+	});
+}
+
 function printJson(json) {
 	let obj = JSON.parse(json);
 	let txt = '';
