@@ -13,6 +13,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ivy_libs"/>
-	<classpathentry kind="lib" path="lib/mssql-jdbc-9.4.0.jre16.jar"/>
+	<classpathentry kind="lib" path="C:/MyProjects/my-spring-boot/lib/mssql-jdbc-9.4.1.jre11.jar"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>
