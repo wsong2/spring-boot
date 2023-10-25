@@ -5,9 +5,11 @@ plugins {
 	id 'eclipse'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+//version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
 
 repositories {
 	mavenCentral()
@@ -24,10 +26,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web' 
 	implementation 'org.springframework.boot:spring-boot-starter-jetty'
-	implementation files('libs/mssql-jdbc-12.4.0.jre11.jar')
+	implementation 'org.junit.platform:junit-platform-commons:1.10.0'
+	implementation files('libs/mssql-jdbc-12.4.1.jre11.jar')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+	testImplementation 'org.junit.platform:junit-platform-engine:1.10.0'
 }
 
 test {
 	useJUnitPlatform()
+	jvmArgs '-Xshare:off'
+	jvmArgs '-XX:+EnableDynamicAgentLoading'
 }

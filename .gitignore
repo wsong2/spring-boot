@@ -1,0 +1,8 @@
+.externalToolBuilders
+.gradle
+package-lock.json
+bin
+build
+lib
+application.properties
+node_modules
