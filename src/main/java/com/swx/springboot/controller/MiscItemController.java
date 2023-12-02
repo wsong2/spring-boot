@@ -38,6 +38,10 @@ public class MiscItemController {
 	@Autowired
 	private MiService svce;
 	
+	/*
+	 * This end point is not connected to MiService - just an implementation to test multi-part/form-data
+	 */
+	
 	@RequestMapping(value="/form", method=RequestMethod.POST, consumes={ "multipart/form-data" }, 
 					produces=MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<MultiValueMap<String, Object>> create(
