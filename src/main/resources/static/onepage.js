@@ -303,3 +303,26 @@ function printJson(json) {
 	}
 	document.getElementById("ta1").value = txt;
 }
+
+function doAddProduct(prodForm, btn) {
+	let rec = {};
+	formToRec(prodForm, rec);
+	let jdata = JSON.stringify(rec);
+
+	let headerRec = {'Content-Type': 'application/json'};
+
+	btn.disabled = true;	
+	fetch('/addproduct', {
+		method: "post",
+		body: jdata,
+		headers: headerRec
+	}).then(response => response.json()
+	).then(data => {
+		btn.disabled = false;
+		console.log(data);
+	}).catch(err => {
+		btn.disabled = false;
+		console.log(err);
+	});
+}
+

@@ -5,7 +5,7 @@
 </head>
 <body onload="init();populateTBodys()">
 <ul id="tabs">
- <li><a href="#addnew">Items</a></li> <li><a href="#diag">Diagnosis</a></li> <li><a href="#aspx">Help</a></li>
+ <li><a href="#addnew">Items</a></li> <li><a href="#diag">Diagnosis</a></li> <li><a href="#aspx">Test</a></li>
 </ul>
  <div class="tabContent" id="diag"><form><div class="display-table">
 	<div class="tr"><span>Category&nbsp;</span><div class="td">
@@ -59,23 +59,16 @@
 </div>
 
 <div class="tabContent" id="aspx">
-<pre>
-body {
-  display: grid;
-}
-
-div {
-  display: table;
-  display: table-cell;
-  display: table-column;
-  display: table-colgroup;
-  display: table-header-group;
-  display: table-row-group;
-  display: table-footer-group;
-  display: table-row;
-  display: table-caption;
-}
-</pre>
+<form id="form2">
+<table  className="noborder">
+	<tr><td>ID</td><td><input name="Id" type="number" style="width: 5em" /></td></tr>
+	<tr><td>Name</td><td><input name="Pname" type="text" /></td></tr>
+	<tr><td>Batch</td><td><input name="BatchNo" type="text"/></td></tr>
+	<tr><td>Price</td><td><input name="Price" type="number" step="0.01" min="0.01"/></td></tr>
+	<tr><td>Number</td><td><input name="NoOfProduct" type="number" step="1" min="1" max="999"/></td></tr>
+	<tr><td/><td><button type="button" onClick="doAddProduct(this.form, this)">Submit</button></td></tr>
+</table>
+</form>
 </div>
 <script src="onepage.js"></script> 
 <script>
