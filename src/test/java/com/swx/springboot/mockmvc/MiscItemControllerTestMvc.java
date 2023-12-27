@@ -1,4 +1,4 @@
-package com.swx.springboot.controller;
+package com.swx.springboot.mockmvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
