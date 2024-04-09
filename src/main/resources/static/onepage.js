@@ -20,6 +20,7 @@ const cArrGridViewRows = [{
 const idRadioGroup = 'rsel';
 
 var mGridViewRows = [];
+var mCSRFToken = 'Fetch';
 
 const refreshGridView = () => { rePopulateTBody('idGridView', mGridViewRows); }
 
@@ -34,21 +35,17 @@ function formToRec(formElement, rec)
 
 function formCheckedRec(formElement, rec)
 {	
-	if (document.getElementById("ck1").checked) {
-		rec.itemName = formElement.itemName.value;
-	}
-	if (document.getElementById("ck2").checked) {
-		rec.itemDate = formElement.itemDate.value;
-	}
-	if (document.getElementById("ck3").checked) {
-		rec.descr = formElement.descr.value;
-	}
-	if (document.getElementById("ck4").checked) {
-		rec.value1 = formElement.value1.value;
-		rec.value2 = formElement.value2.value;
-	}
-	if (document.getElementById("ck5").checked) {
-		rec.more = formElement.more.value;
+	let elements = formElement.elements;
+	for (let i=0; i<elements.length; i++) {
+		let elt = elements[i];
+	  	if (elt.type != "checkbox" || !elt.checked)	continue;
+		if (elt.id === 'ck_price') {
+			rec.value1 = formElement.value1.value;
+			rec.value2 = formElement.value2.value;	
+		} else {
+			let nm = elt.id.substring(3);
+			rec[nm] = formElement[nm].value;
+		}
 	}
 }
   
@@ -154,9 +151,17 @@ function rePopulateTBody(idTBody, rows) {
 
 function doLoad(idTBody, btn) {
 	btn.disabled = true;
-	fetch("/item/all").then(
-		(response) => response.json()
-	).then((data) => {
+	fetch("/item/all").then(response => {
+		for (const [nm, val] of response.headers.entries()) {
+			console.log(nm+ ': '+ val);
+			if (nm == 'x-csrf-token') {
+				mCSRFToken = val;
+			}
+		}
+		//mCSRFToken = response.headers['x-csrf-token'];
+		console.log('CSRF Token: '+ mCSRFToken);
+		return response.json();
+	}).then((data) => {
 		//console.log(data);
 		rePopulateTBody(idTBody, data);
 		btn.disabled = false;
@@ -169,7 +174,11 @@ function doLoad(idTBody, btn) {
 function doAdd(formElement, btn)
 {
 	let rec = {};
-	let headerRec = {'Content-Type': 'application/json'};
+	let headerRec = {
+		'Content-Type': 'application/json',
+		'X-CSRF-Token': mCSRFToken
+	};
+	console.log('HEADER: ' + JSON.stringify(headerRec));
 	if (formElement.itemId.value == '') {
 		btn.disabled = true;
 		formToRec(formElement, rec);
@@ -177,6 +186,7 @@ function doAdd(formElement, btn)
 		
 		fetch('/item/addnew', {
 			method: "post",
+			credentials: "same-origin",
 			body: jdata,
 			headers: headerRec
 		}).then(response => response.json()
@@ -194,9 +204,12 @@ function doAdd(formElement, btn)
 		rec.itemId = formElement.itemId.value;
 		btn.disabled = true;
 		let jdata = JSON.stringify(rec);
+		console.log('***');
+		console.log(jdata);
 		
 		fetch('/item/update', {
 			method: "post",
+			credentials: "same-origin",
 			body: jdata,
 			headers: headerRec
 		}).then(response => response.json()

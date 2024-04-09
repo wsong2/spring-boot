@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.2.1'
+	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'java'
 	id 'eclipse'
@@ -24,8 +24,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
-	implementation 'org.junit.platform:junit-platform-commons:1.10.1'
-	implementation files('libs/mssql-jdbc-12.4.2.jre11.jar')
+	implementation 'org.junit.platform:junit-platform-commons:1.10.2'
+	implementation files('libs/mssql-jdbc-12.6.1.jre11.jar')
 }
 
 test { 
@@ -34,7 +34,7 @@ test {
 	jvmArgs '-XX:+EnableDynamicAgentLoading'
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-test' 
-		implementation 'org.junit.jupiter:junit-jupiter-api:5.10.0' 
-		implementation 'org.junit.platform:junit-platform-engine:1.10.0' 
+		implementation 'org.junit.jupiter:junit-jupiter-api:5.10.2' 
+		implementation 'org.junit.platform:junit-platform-engine:1.10.2' 
 	}
 }

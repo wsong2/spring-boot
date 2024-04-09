@@ -4,5 +4,6 @@ package-lock.json
 bin
 build
 lib
+libs
 application.properties
 node_modules

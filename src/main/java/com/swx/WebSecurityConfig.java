@@ -9,19 +9,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
-	
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		//http.csrf(Customizer.withDefaults());
+		http.csrf((csrf) -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+			.csrf((csrf) -> csrf.csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()));
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home").permitAll()
+				//.requestMatchers("/", "/home").permitAll()
+				//.requestMatchers("/item/**").hasRole("USER")
+				//.requestMatchers(HttpMethod.POST, "/item/update").hasRole("USER")
 				.anyRequest().authenticated()
 			)
+			.addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
 			.formLogin((form) -> form
 				.loginPage("/login")
 				.permitAll()
@@ -34,9 +41,6 @@ public class WebSecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		
-		//String bcryptPwd = "{bcrypt}$2a$10$e9jdOl2QxHuacq1t2ij6X.jF5Xl7LBUTt8uaHHcQHOjR0M5n3C.2m";
-		//String bcryptPwd = "{bcrypt}" + password;
-		
 		UserDetails user =
 				 User.builder()
 					.username("wsong")
@@ -45,4 +49,5 @@ public class WebSecurityConfig {
 					.build();
 		return new InMemoryUserDetailsManager(user);
 	}
+
 }
