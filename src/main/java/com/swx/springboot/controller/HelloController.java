@@ -20,7 +20,7 @@ public class HelloController {
 	
 	@GetMapping("/hello")
 	public String index() {
-		return "Greetings from Spring Boot (with Jetty)!";
+		return productService.greet();
 	}
 
 	@GetMapping("/message")

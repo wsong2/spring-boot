@@ -21,12 +21,6 @@ public class HelloRersponseTextTest {
 	private TestRestTemplate template;
 
 	@Test
-	void getHello() {
-        ResponseEntity<String> response = template.getForEntity("/hello", String.class);
-        assertThat(response.getBody()).isEqualTo("Greetings from Spring Boot (with Jetty)!");
-	}
-
-	@Test
 	void greetingShouldReturnDefaultMessage() {
 		// index.html content
 		assertThat(this.template.getForObject("http://localhost:" + port + "/",

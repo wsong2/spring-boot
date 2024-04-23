@@ -35,4 +35,9 @@ public class ProdctService implements IProductService {
 		return product;
 	}
 
+	@Override
+	public String greet() {
+		return "Greetings from Spring Boot (with Jetty)!";
+	}
+
 }

@@ -7,4 +7,5 @@ import com.swx.springboot.model.Product;
 public interface IProductService {
 	List<Product> findAll();
 	Product saveProduct(Product product);
+	String greet();
 }
