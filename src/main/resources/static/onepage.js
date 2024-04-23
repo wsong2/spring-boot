@@ -255,10 +255,14 @@ function doDelete(btn) {
 }
 
 function doFetch(form, btn) {	// tab Diagnosis
+	let headerRec = {
+		'X-CSRF-Token': mCSRFToken
+	};
 	btn.disabled = true;	
 	fetch('/item/form', {
 		method: 'POST',
-		body: new FormData(form)
+		body: new FormData(form),
+		headers: headerRec
 	}).then(response => response.text()
 	).then(text => {
 		//console.log(text); 
@@ -322,7 +326,7 @@ function doAddProduct(prodForm, btn) {
 	formToRec(prodForm, rec);
 	let jdata = JSON.stringify(rec);
 
-	let headerRec = {'Content-Type': 'application/json'};
+	let headerRec = {'Content-Type': 'application/json', 'X-CSRF-Token': mCSRFToken};
 
 	btn.disabled = true;	
 	fetch('/addproduct', {
