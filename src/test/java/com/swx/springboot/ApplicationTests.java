@@ -13,11 +13,11 @@ import com.swx.springboot.controller.MiscItemController;
 public class ApplicationTests {
 
 	@Autowired
-	MiscItemController miControler;
+	MiscItemController miController;
 	
 	@Test
 	void contextLoads() {
-		Assertions.assertThat(miControler).isNotNull();
+		Assertions.assertThat(miController).isNotNull();
 	}
 
 }
