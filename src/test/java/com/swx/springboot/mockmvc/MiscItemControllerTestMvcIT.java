@@ -22,13 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@Disabled("Disabled until finding a way of generation csrfToken for test!")
-class MiscItemControllerTestMvc {
+class MiscItemControllerTestMvcIT {
 
 	@Autowired
 	private MockMvc mvc;
 	
 	@Test
+    @Disabled("Disabled until finding a way of generation csrfToken for test!")
 	void doGetOneValue() throws Exception {
 		String oneValuePath = "/item/onevalue/101/builtIn";
 		

@@ -7,3 +7,5 @@ lib
 libs
 application.properties
 node_modules
+out
+

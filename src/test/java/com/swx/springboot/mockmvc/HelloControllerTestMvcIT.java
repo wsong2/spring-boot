@@ -19,8 +19,7 @@ import com.swx.springboot.service.ProdctService;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@Disabled("Disabled until finding a way of generation csrfToken for test!")
-class HelloControllerTestMvc {
+class HelloControllerTestMvcIT {
 
 	@Autowired
 	private MockMvc mvc;
@@ -28,6 +27,7 @@ class HelloControllerTestMvc {
 	@MockBean
 	private ProdctService service;
 
+	@Disabled("Disabled until finding a way of generation csrfToken for test!")
 	@Test
 	public void getHello() throws Exception {		
 		when(service.greet()).thenReturn("Greetings from Spring Boot (with Jetty)!");
