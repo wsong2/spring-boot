@@ -31,19 +31,16 @@ public class MiConverter {
 	
 	public static Integer parseIntValue(Object val)
 	{
+		if (val == null) return null;
 		if (val instanceof Integer) {
 			return (Integer)val;
 		}
 		String strVal = (String)val;
-		if (strVal == null) {
-			logger.error("** Integer value conversion: " + val);
-			return null;
-		}		
 	    try {
 	    	return Integer.parseInt(strVal);
 	    }
 	    catch (NumberFormatException e) {
-	    	logger.warn("** bad int val: " + strVal);
+            logger.warn("** bad int val: {}", strVal);
 	    	return null;
 	    }
 	}
@@ -56,16 +53,15 @@ public class MiConverter {
 		if (val instanceof Integer) {
 			return Double.valueOf((Integer)val);
 		}
-		String strVal = (String)val;
-		if (strVal == null) {
-			logger.error("** Double value conversion: " + val);
+		if (val == null) {
 			return null;
-		}		
+		}
+		String strVal = (String)val;
 	    try {
 	    	return Double.parseDouble(strVal);
 	    }
 	    catch (NumberFormatException e) {
-	    	logger.warn("** bad double: " + strVal);
+            logger.warn("** bad double: {}", strVal);
 	    	return null;
 	    }
 	}
@@ -84,21 +80,18 @@ public class MiConverter {
 	    	return new DateResult(localDate, PARSE_OK);
 	    }
 	    catch (DateTimeParseException e) {
-	    	logger.warn("** bad LocalDate: " + dateStr);
+            logger.warn("** bad LocalDate: {}", dateStr);
 			return new DateResult(null, PARSE_ERR);
 	    }
 	}
 	
 	public static LocalDateTime parseDttm(Object val)
 	{
+		if (val == null) return null;
 		if (val instanceof LocalDateTime) {
 			return (LocalDateTime)val;
 		}
 		String dttmStr = (String)val;
-		if (dttmStr == null) {
-			logger.error("** LocalDateTime conversion: " + val);
-			return null;
-		}		
 		try {
 			String s19 = (dttmStr.length() > 19) ? dttmStr.substring(0, 19) : dttmStr;
 			return LocalDateTime.parse(s19);
@@ -113,7 +106,7 @@ public class MiConverter {
 			return mapper.writeValueAsString(map);
 		} catch (JsonProcessingException e) {
 			String msg = e.getMessage();
-			logger.error("** EX.JsonProcessing: " + msg);
+            logger.error("** EX.JsonProcessing: {}", msg);
 			return msg;
 		}	
 	}

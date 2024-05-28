@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 import com.swx.springboot.model.Product;
 
 @Service
-public class ProdctService implements IProductService {
+public class ProductService implements IProductService {
 	
-	List<Product> addedProdcuts = new ArrayList<>();
+	List<Product> addedProducts = new ArrayList<>();
 	
 	@Override
 	public List<Product> findAll() {
 			//creating an object of ArrayList  
-			List<Product> products = new ArrayList<Product>();  
+			List<Product> products = new ArrayList<>();
 			//adding products to the List  
 			products.add(new Product(100L, "Mobile", "CLK98123", 9000.00, 6));  
 			products.add(new Product(101L, "Smart TV", "LGST09167", 60000.00, 3));  
@@ -24,14 +24,14 @@ public class ProdctService implements IProductService {
 			products.add(new Product(104L, "Air Conditioner", "ACLG66721", 30000.00, 5));  
 			products.add(new Product(105L, "Refrigerator ", "12WP9087", 10000.00, 4));  
 			
-			products.addAll(addedProdcuts);
+			products.addAll(addedProducts);
 			//returns a list of product  
 			return products;
 		}
 
 	@Override
 	public Product saveProduct(Product product) {
-		addedProdcuts.add(product);
+		addedProducts.add(product);
 		return product;
 	}
 

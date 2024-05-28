@@ -61,10 +61,10 @@ public class MiscItemController {
 				"miMore", miMore.orElse("- not strict -")
 		);
 		String json = MiConverter.mapToJson(map);
-		MultiValueMap<String, Object> mpr = new LinkedMultiValueMap<String, Object>();
+		MultiValueMap<String, Object> mpr = new LinkedMultiValueMap<>();
 	    var xHeader = new HttpHeaders();
 	    xHeader.setContentType(MediaType.APPLICATION_JSON);
-	    HttpEntity<String> xPart = new HttpEntity<String>(json, xHeader);
+	    HttpEntity<String> xPart = new HttpEntity<>(json, xHeader);
 	    mpr.add("response", xPart);
 		return new ResponseEntity<MultiValueMap<String, Object>>(mpr, HttpStatus.OK);
 	}
@@ -80,7 +80,7 @@ public class MiscItemController {
 	{
 		for (Map.Entry<String, Object> entry: map.entrySet()) {
 			String sKey = entry.getKey();
-			if (!sKey.isBlank())	logger.info("** " + sKey + ": " +  entry.getValue());
+			if (!sKey.isBlank()) logger.info("** {}: {}", sKey, entry.getValue());
 		}
 	    return svce.updateRecord(map);
 	}

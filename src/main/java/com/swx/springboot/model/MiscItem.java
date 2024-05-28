@@ -25,7 +25,7 @@ public class MiscItem {
 	public void setItemDate(LocalDate dt) { itemDate = dt; }
 	public void setDttm(LocalDateTime localDttm) { dttm = localDttm; }
 	public void setValue1(Integer i) {value1 = i;}
-	public void setValue2(Double d) {value2 = (d==null) ? null : BigDecimal.valueOf(d.doubleValue());}
+	public void setValue2(Double d) {value2 = (d==null) ? null : BigDecimal.valueOf(d);}
 
 	public int getItemId() { return itemId; }	
 	public String getItemName() { return itemName; }

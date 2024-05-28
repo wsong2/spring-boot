@@ -22,7 +22,7 @@ public class MiService {
 	    	return Map.of("op","new", "details", "missing item name");
 	    }	    
 	    Integer ret = dao.addRecord(mapIn);
-	    int itemId = (ret == null) ? -1 : ret.intValue();
+	    int itemId = (ret == null) ? -1 : ret;
 		if (itemId > 0) {
 			return Map.of("status", "OK", "op", "new", "itemId", String.valueOf(itemId));		
 		}
@@ -40,7 +40,7 @@ public class MiService {
 			return Map.of("status", "E", "itemId", "Null");			
 		}
 		Integer row = dao.deleteRecord(itemId);
-		if (row != null && row.intValue() > 0) {
+		if (row != null && row > 0) {
 			return Map.of("status", "OK", "itemId", String.valueOf(itemId.intValue()));
 		}
 		return Map.of("status", "sql", "itemId", String.valueOf(itemId));	

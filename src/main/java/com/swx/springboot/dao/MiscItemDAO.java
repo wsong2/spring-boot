@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,15 +38,15 @@ public class MiscItemDAO {
 		Object columnValue;
 	}
 	
-	private final static String CATEG = "categ";
-	private final static String VALUE_CATEG = "sp.api";
+	private final static String CATEGORY = "categ";
+	private final static String VALUE_CATEGORY = "sp.api";
 	private final static String VALUE1 = "value1";
 	private final static String VALUE2 = "value2";
 
 	private final static ColumnDfn[] COLUMN_DFN = {
 			new ColumnDfn("item_name", Types.NVARCHAR),
 	        new ColumnDfn("item_date", Types.DATE),
-	        new ColumnDfn(CATEG, Types.NVARCHAR),
+	        new ColumnDfn(CATEGORY, Types.NVARCHAR),
 	        new ColumnDfn("descr", Types.NVARCHAR),
 	        new ColumnDfn(VALUE1, Types.INTEGER),
 	        new ColumnDfn(VALUE2, Types.DECIMAL),
@@ -63,14 +64,14 @@ public class MiscItemDAO {
 			mapSqlParam.addValue(dbColumn, java.sql.Date.valueOf(localDate));
 			return true;
 		}
-		if (CATEG.equals(columnId)) {
-			mapSqlParam.addValue(dbColumn, VALUE_CATEG); 
+		if (CATEGORY.equals(columnId)) {
+			mapSqlParam.addValue(dbColumn, VALUE_CATEGORY);
 		} else if (VALUE1.equals(columnId)) {
     	    mapSqlParam.addValue(dbColumn, MiConverter.parseIntValue(objValue));
 		} else if (VALUE2.equals(columnId)) {
     	    mapSqlParam.addValue(dbColumn, MiConverter.parseDoubleValue(objValue));
 		} else {
-			mapSqlParam.addValue(dbColumn, (String)objValue);
+			mapSqlParam.addValue(dbColumn, objValue);
 		}
 		return true;
 	}
@@ -85,7 +86,7 @@ public class MiscItemDAO {
 			info.sqlType = dfn.sqlType;
 			return info;
 		}
-		logger.info("** DB: unmatched key - " + sKey);
+        logger.info("** DB: unmatched key - {}", sKey);
 		return null;
 	}
 
@@ -138,19 +139,19 @@ public class MiscItemDAO {
     	sbColumn.insert(0, "UPDATE dbo.MiscItems SET [dttm2]=sysdatetime()");
 	    sbColumn.append(" WHERE [item_id]=? AND [categ]=?");
 	    String sql = sbColumn.toString();
-		logger.info("SQL stmt: " + sql);
+        logger.info("SQL stmt: {}", sql);
 		
-		Boolean result = execUpdate(sql, itemId.intValue(), columns);
+		Boolean result = execUpdate(sql, itemId, columns);
 		if (result == null)			return Map.of("status", "sql", "op", "update", "details", itemId + ": execUpdate");
-		if (result.booleanValue())	return Map.of("status", "OK", "op", "update", "itemId", String.valueOf(itemId));
+		if (result)	return Map.of("status", "OK", "op", "update", "itemId", String.valueOf(itemId));
 		return Map.of("status", "E", "details", itemId + ": ill-formatted sql");
     }
     
     private Boolean execUpdate(String sql, int itemId, List<ColumnInfo> columns)
     {
 		try (
-			Connection conn= jdbcTemplate.getDataSource().getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+                Connection conn= Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)
 		) {
 		    final int nColumn = columns.size()+1;
 		    for (int iCol=1; iCol < nColumn; iCol++) {
@@ -158,14 +159,14 @@ public class MiscItemDAO {
 		    	if (Types.DATE == info.sqlType) {
 					MiConverter.DateResult dateResult = MiConverter.parseLocalDate(info.columnValue);
 					if (dateResult.outcome == MiConverter.PARSE_ERR) {
-						logger.error("DAO.execUpdate: date param parse error - #" + iCol);
+                        logger.error("DAO.execUpdate: date param parse error - #{}", iCol);
 						return false;
 					}
 					LocalDate localDate = (dateResult.outcome == MiConverter.BLANK_INPUT) ? LocalDate.now() : dateResult.localDate;			
 	        		pstmt.setDate(iCol, java.sql.Date.valueOf(localDate));		    		
 		    	} else if (Types.INTEGER == info.sqlType) {
 	    	   		Integer iValue = MiConverter.parseIntValue(info.columnValue);
-	    			pstmt.setInt(iCol, iValue.intValue());		    		
+	    			pstmt.setInt(iCol, iValue);
 		    	} else if (Types.DECIMAL == info.sqlType) {
 	    	   		Double dValue = MiConverter.parseDoubleValue(info.columnValue);
 	    	    	pstmt.setBigDecimal(iCol, BigDecimal.valueOf(dValue));		    		
@@ -175,7 +176,7 @@ public class MiscItemDAO {
 		    }
 			//logger.info(String.format("** pstmt %d,%s", nColumn, CATEG));
 			pstmt.setInt(nColumn, itemId);
-			pstmt.setString(nColumn+1, VALUE_CATEG);
+			pstmt.setString(nColumn+1, VALUE_CATEGORY);
 			return (pstmt.executeUpdate() > 0);
 		} catch (SQLException e) {
 			logger.error("DAO.execUpdate", e);
@@ -190,10 +191,10 @@ public class MiscItemDAO {
 	            .withoutProcedureColumnMetaDataAccess()
 	            .declareParameters(
 	            	new SqlParameter("item_id", Types.INTEGER),
-	            	new SqlParameter(CATEG, Types.NVARCHAR),
+	            	new SqlParameter(CATEGORY, Types.NVARCHAR),
                     new SqlOutParameter("@row", Types.INTEGER)
 	            );
-	    MapSqlParameterSource in = new MapSqlParameterSource().addValue("itemId", itemId).addValue(CATEG, VALUE_CATEG);
+	    MapSqlParameterSource in = new MapSqlParameterSource().addValue("itemId", itemId).addValue(CATEGORY, VALUE_CATEGORY);
 	    Map<String, Object> out = call.execute(in);
 	    return (Integer)out.get("@row");    	
 	}
@@ -206,11 +207,11 @@ public class MiscItemDAO {
 	{
         List<MiscItem> ret = new ArrayList<>();
 		try (
-			Connection conn= jdbcTemplate.getDataSource().getConnection();
-			PreparedStatement pstmt = conn.prepareStatement("{call dbo.GetItem(?,?)}");
+				Connection conn= Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
+                PreparedStatement pstmt = conn.prepareStatement("{call dbo.GetItem(?,?)}")
 		) {
 			pstmt.setInt(1, 0);
-			pstmt.setString(2, VALUE_CATEG);
+			pstmt.setString(2, VALUE_CATEGORY);
 	        ResultSet rs = pstmt.executeQuery();
 	        while (rs.next()) {
 	        	MiscItem mi = new MiscItem();

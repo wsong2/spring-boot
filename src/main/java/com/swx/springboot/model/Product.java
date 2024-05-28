@@ -13,7 +13,7 @@ public class Product {
     private String productName;
     
 	@JsonProperty("BatchNo")
-    private String batchno;
+    private String batchNo;
     
 	@JsonProperty("Price")
     private double price;
@@ -27,7 +27,7 @@ public class Product {
 
 	public String getProductName() { return productName; }
 
-	public String getBatchNo() { return batchno; }
+	public String getBatchNo() { return batchNo; }
 	
     public Long getId() { return id; }
 
@@ -37,7 +37,7 @@ public class Product {
     public Product(Long id, String name, String batchno, double price, int noOfProduct) {
         this.id = id;
         this.productName = name;
-        this.batchno = batchno;
+        this.batchNo = batchno;
         this.price = price;
         this.noOfProduct = noOfProduct;
     }

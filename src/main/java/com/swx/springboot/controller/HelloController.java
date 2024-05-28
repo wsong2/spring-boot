@@ -30,9 +30,8 @@ public class HelloController {
     }
 	
 	@GetMapping(value = "/product")  
-	public List<Product> getProduct() {  
-		List<Product> products = productService.findAll();  
-		return products;  
+	public List<Product> getProduct() {
+        return productService.findAll();
 	}
 	
 	@PostMapping(value = "/addproduct", consumes = "application/json", produces = "application/json")  

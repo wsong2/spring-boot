@@ -15,7 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.swx.springboot.service.ProdctService;
+import com.swx.springboot.service.ProductService;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -25,7 +25,7 @@ class HelloControllerTestMvcIT {
 	private MockMvc mvc;
 
 	@MockBean
-	private ProdctService service;
+	private ProductService service;
 
 	@Disabled("Disabled until finding a way of generation csrfToken for test!")
 	@Test

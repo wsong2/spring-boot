@@ -1,6 +1,7 @@
 package com.swx.springboot.model;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 public class MiSerializer extends StdSerializer<MiscItem> {
+	@Serial
 	private static final long serialVersionUID = 6488808530545954068L;
 	
 	public MiSerializer() {
