@@ -1,6 +1,6 @@
 plugins {
-	id 'org.springframework.boot' version '3.2.5'
-	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.springframework.boot' version '3.3.6'
+	id 'io.spring.dependency-management' version '1.1.6'
 	id 'java'
 	id 'idea'
 }
@@ -17,6 +17,8 @@ configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
+def junitPlatformVersion = '1.10.3'
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web' 
@@ -24,7 +26,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
-	implementation 'org.junit.platform:junit-platform-commons:1.10.2'
+	implementation "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
 	implementation files('libs/mssql-jdbc-12.6.1.jre11.jar')
 }
 
@@ -34,7 +36,7 @@ test {
 	jvmArgs '-XX:+EnableDynamicAgentLoading'
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-test' 
-		implementation 'org.junit.jupiter:junit-jupiter-api:5.10.2' 
-		implementation 'org.junit.platform:junit-platform-engine:1.10.2' 
+		implementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+		implementation "org.junit.platform:junit-platform-engine:${junitPlatformVersion}"
 	}
 }

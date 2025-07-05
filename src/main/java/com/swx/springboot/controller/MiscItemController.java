@@ -52,12 +52,12 @@ public class MiscItemController {
 			@RequestParam("miMore") Optional<String> miMore,
 			@RequestParam("miDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Optional<LocalDate> miDate
 	) {
-		String price = value1.orElse(1) + (value2.isPresent() ? (" for " + value2.get()) : "");
+		String price = value1.orElse(1) + (value2.map(aDouble -> (" for " + aDouble)).orElse(""));
 		Map<String, String> map = Map.of(
 				"categ", categ, 
 				"price", price, 
 				"choice", choice.orElse(""),
-				"miDate", (miDate.isPresent() ? miDate.get().toString() : ""),
+				"miDate", (miDate.map(LocalDate::toString).orElse("")),
 				"miMore", miMore.orElse("- not strict -")
 		);
 		String json = MiConverter.mapToJson(map);

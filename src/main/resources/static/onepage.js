@@ -276,7 +276,6 @@ function doFetch(form, btn) {	// tab Diagnosis
 }
 
 function parseMultiPart(bodyText) {
-	const RE = /Content-Length: (\d+)/;
 	let lines = bodyText.split(/[\r\n]+/);
 	let buffer = '';
 	for (let i=0, textSize= -1, len=lines.length; i<len; i++) {
@@ -287,6 +286,7 @@ function parseMultiPart(bodyText) {
 			if (buffer.length >= textSize)
 				return buffer.substring(0,textSize);
 		} else {
+			const RE = /Content-Length: (\d+)/;
 			let arr = RE.exec(line);
 			if (arr) 
 				textSize = parseInt(arr[1]);
