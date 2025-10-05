@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.4.10'
+	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 	id 'idea'
@@ -17,7 +17,7 @@ configurations {
     compile.exclude module: "spring-boot-starter-tomcat"
 }
 
-def junitPlatformVersion = '1.11.4'
+def junitPlatformVersion = '1.12.2'
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
@@ -36,7 +36,7 @@ test {
 	jvmArgs '-XX:+EnableDynamicAgentLoading'
 	dependencies {
 		implementation 'org.springframework.boot:spring-boot-starter-test' 
-		implementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
+		implementation 'org.junit.jupiter:junit-jupiter-api:5.12.2'
 		implementation "org.junit.platform:junit-platform-engine:${junitPlatformVersion}"
 	}
 }
